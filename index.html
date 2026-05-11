@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💕 给你</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #FDF6EC;
+      --card: #FFFFFF;
+      --primary: #E8886A;
+      --primary-light: #FFEEE8;
+      --secondary: #7C6A5D;
+      --text: #4A3F35;
+      --text-light: #8B7B6B;
+      --soft: #E8DDD4;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* 背景装饰 */
+    .bg-decor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    .bg-circle-1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #FFE4D6 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+    }
+
+    .bg-circle-2 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, #D6EEFF 0%, transparent 70%);
+      bottom: 5%;
+      left: -100px;
+    }
+
+    .bg-circle-3 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, #E4FFD6 0%, transparent 70%);
+      top: 40%;
+      right: 20%;
+    }
+
+    /* ===== 整体三栏布局 ===== */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+      gap: 20px;
+    }
+
+    /* 侧边图片栏 */
+    .side-column {
+      flex: 0 0 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-column.left {
+      align-items: flex-end;
+    }
+
+    .side-column.right {
+      align-items: flex-start;
+    }
+
+    .side-img {
+      width: 130px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(124, 106, 93, 0.15);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .side-img:hover {
+      transform: scale(1.05);
+    }
+
+    .side-img:nth-child(odd) {
+      transform: rotate(-3deg);
+    }
+
+    .side-img:nth-child(even) {
+      transform: rotate(3deg);
+    }
+
+    .side-img:hover {
+      transform: scale(1.05) rotate(0deg) !important;
+    }
+
+    /* 装饰贴纸 */
+    .side-sticker {
+      font-size: 28px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .side-sticker:nth-child(odd) {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* 主内容区 */
+    .main-content {
+      flex: 1;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 场景 */
+    .scene {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .scene.active {
+      display: flex;
+    }
+
+    /* ===== 场景1 ===== */
+    .title-section {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .main-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 300;
+    }
+
+    .hearts-row {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 14px 0;
+      font-size: 16px;
+    }
+
+    .heart {
+      animation: heartBeat 1.5s ease-in-out infinite;
+    }
+
+    .heart:nth-child(2) { animation-delay: 0.2s; }
+    .heart:nth-child(3) { animation-delay: 0.4s; }
+    .heart:nth-child(4) { animation-delay: 0.6s; }
+    .heart:nth-child(5) { animation-delay: 0.8s; }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* 照片墙 */
+    .photo-wall {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .photo-item {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(124, 106, 93, 0.12);
+      position: relative;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-item:nth-child(1) { transform: rotate(-2deg); }
+    .photo-item:nth-child(2) { transform: rotate(2deg); }
+    .photo-item:nth-child(3) { transform: rotate(1deg); }
+    .photo-item:nth-child(4) { transform: rotate(-1deg); }
+
+    .photo-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 3px solid white;
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    .photo-sticker {
+      position: absolute;
+      font-size: 20px;
+      z-index: 2;
+      filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.15));
+    }
+
+    .photo-sticker.tl { top: -6px; right: -6px; }
+    .photo-sticker.br { bottom: -6px; left: -6px; }
+
+    /* 卡片 */
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(124, 106, 93, 0.08);
+      border: 1px solid var(--soft);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .card-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    .card-text p {
+      margin-bottom: 10px;
+    }
+
+    .card-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .highlight {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .signature {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 18px;
+      font-style: italic;
+    }
+
+    /* 按钮 */
+    .btn {
+      width: 100%;
+      padding: 16px 28px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #FF9B7A 100%);
+      color: white;
+      box-shadow: 0 6px 20px rgba(232, 136, 106, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(232, 136, 106, 0.45);
+    }
+
+
+    .btn-row {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-stubborn {
+      width: 100%;
+      padding: 16px 28px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #8B7B6B 0%, #A69585 100%);
+      color: white;
+      box-shadow: 0 6px 20px rgba(139, 123, 107, 0.3);
+    }
+
+    .btn-stubborn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(139, 123, 107, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: #FFD6C8;
+    }
+
+    /* ===== 场景2 ===== */
+    .big-heart {
+      font-size: 56px;
+      animation: bigHeart 1s ease-in-out infinite;
+      margin: 16px 0;
+    }
+
+    @keyframes bigHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .celebration-text {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .love-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0;
+      font-size: 26px;
+    }
+
+    .love-gallery span {
+      animation: loveFloat 2s ease-in-out infinite;
+    }
+
+    .love-gallery span:nth-child(2) { animation-delay: 0.3s; }
+    .love-gallery span:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes loveFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .whisper-card {
+      background: linear-gradient(135deg, #FFF5F2 0%, #FFF 100%);
+      border-radius: 18px;
+      padding: 22px;
+      width: 100%;
+      border: 2px solid var(--primary-light);
+      margin-bottom: 16px;
+    }
+
+    .whisper-title {
+      font-size: 13px;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .whisper-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text);
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.6;
+      min-height: 72px;
+    }
+
+    .whisper-input::placeholder {
+      color: #C4A99A;
+    }
+
+    /* 爱心雨 */
+    .heart-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .rain-heart {
+      position: absolute;
+      font-size: 22px;
+      animation: rain 3s linear forwards;
+    }
+
+    @keyframes rain {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* 弹窗 */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .modal.show {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px 28px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    }
+    .modal-title {
+      font-size: 18px;
+      color: #4A3F35;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .modal-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 页脚 */
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 11px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 900px) {
+      .page-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .side-column {
+        flex-direction: row;
+        flex: 0 0 auto;
+        width: 100%;
+        justify-content: center;
+        order: -1;
+      }
+
+      .side-column.left,
+      .side-column.right {
+        align-items: center;
+      }
+
+      .side-img {
+        width: 80px;
+        height: 110px;
+      }
+
+      .side-sticker {
+        display: none;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .main-title { font-size: 28px; }
+      .photo-grid { gap: 8px; }
+      .card { padding: 20px; }
+      .main-content { padding: 0 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-decor">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <!-- 左侧栏 -->
+    <div class="side-column left">
+      <span class="side-sticker">🧸</span>
+      <img class="side-img" src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2Fe3f5619561bd71617ce1e635d8569fe77c2b61a4634406601870fe199e3d7ab1..jpeg?Expires=1778553233&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=bAQ7pd0u5NdwejFuJdLJsPYnoqE%3D" alt="左侧照片1">
+      <img class="side-img" src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F521fea10ba095ecba5aac28fa6a98a6dca5a97849f7d2e63fe9d2e47ad4ea388..jpeg?Expires=1778553235&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=aamJrodO%2FKJHd2uMHJvVE0m%2Begs%3D" alt="左侧照片2">
+      <span class="side-sticker">💤</span>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+      <!-- 场景1 -->
+      <div class="scene active" id="scene-photos">
+        <div class="title-section">
+          <h1 class="main-title">💕 给你</h1>
+          <div class="hearts-row">
+            <span class="heart">💗</span>
+            <span class="heart">💕</span>
+            <span class="heart">💖</span>
+            <span class="heart">💗</span>
+            <span class="heart">💕</span>
+          </div>
+          <p class="subtitle">世界上最好最温柔的ppj..你好</p>
+        </div>
+
+        <div class="photo-wall">
+          <div class="photo-grid">
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F444b0e232e18901375e712b92cc3d3c181e653e5dad8ac85d8bcaebed47fc15e..jpeg?Expires=1778549489&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=A2uvDvr5Zx0wTdWiCFN6yW1sk8k%3D" alt="回忆1">
+              <span class="photo-sticker tl">✨</span>
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2Fd41a072805fd369f7ef7173cd21eef519346d8693346ebc0a26aa403c991e747..jpeg?Expires=1778549488&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=TXjfWpfrJEaF2JyVqCAAhk4kqvA%3D" alt="回忆2">
+              <span class="photo-sticker br">🌸</span>
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F654079e3e1b93c1957f72b44ed3400aeb4be37e46fdbc953563ba0a0bfb6debd..jpeg?Expires=1778549488&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=k%2FUGKrOokeDKh7Y9LR2LQD78A3M%3D" alt="回忆3">
+              <span class="photo-sticker tl">💫</span>
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F11c0785c7f49d53e354238ec116d9e00be040ba297e0cecb8cdf2ff1cb842b5f..jpeg?Expires=1778549487&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=eWHptkrjL4VbwpN%2BO9nOUg%2FuxmY%3D" alt="回忆4">
+              <span class="photo-sticker br">✨</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-text">
+            <p>老婆婆我想你了</p>
+            <p>身体不舒服让我情绪变得好差</p>
+            <p>明明想哄你，结果越哄越糟。</p>
+            <p>这两天一直心里可难受可想你，自己走在路上听着太聪明失落，晚上在床上偷偷想你/(ㄒoㄒ)/~~</p>
+          </div>
+          <div class="signature">—— 一直想你甚至两天没洗澡没刮胡子的cch</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="forgive()">
+            <span>跟cch进行甜蜜对话😋</span>
+          </button>
+          <button class="btn btn-stubborn" onclick="stubborn()">
+            <span>就不对话😡</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 场景2 -->
+      <div class="scene" id="scene-happy">
+        <div class="title-section">
+          <h1 class="main-title">🥹 谢谢你！</h1>
+        </div>
+
+        <div class="big-heart">💕</div>
+
+        <p class="celebration-text">
+          小狗满血复活了！<br>
+          谢谢婆婆的包容和爱。给你吃我的大汗脚 ❤️
+        </p>
+
+        <div class="love-gallery">
+          <span>🌸</span>
+          <span>💕</span>
+          <span>✨</span>
+        </div>
+
+        <div class="photo-wall">
+          <div class="photo-grid">
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F444b0e232e18901375e712b92cc3d3c181e653e5dad8ac85d8bcaebed47fc15e..jpeg?Expires=1778549489&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=A2uvDvr5Zx0wTdWiCFN6yW1sk8k%3D" alt="回忆1">
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2Fd41a072805fd369f7ef7173cd21eef519346d8693346ebc0a26aa403c991e747..jpeg?Expires=1778549488&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=TXjfWpfrJEaF2JyVqCAAhk4kqvA%3D" alt="回忆2">
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F654079e3e1b93c1957f72b44ed3400aeb4be37e46fdbc953563ba0a0bfb6debd..jpeg?Expires=1778549488&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=k%2FUGKrOokeDKh7Y9LR2LQD78A3M%3D" alt="回忆3">
+            </div>
+            <div class="photo-item">
+              <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2F11c0785c7f49d53e354238ec116d9e00be040ba297e0cecb8cdf2ff1cb842b5f..jpeg?Expires=1778549487&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=eWHptkrjL4VbwpN%2BO9nOUg%2FuxmY%3D" alt="回忆4">
+            </div>
+          </div>
+        </div>
+
+        <div class="whisper-card">
+          <div class="whisper-title">💌 想对你说...</div>
+          <textarea class="whisper-input" placeholder="在这里写下想对她说的话..." rows="3"></textarea>
+        </div>
+
+        <button class="btn btn-secondary" onclick="reset()">
+          <span>🔄 再看一遍</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 右侧栏 -->
+    <div class="side-column right">
+      <span class="side-sticker">🎀</span>
+      <img class="side-img" src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2Fcc4685aaadac35148ba70bb24565f73ca447e478a390d1fca10e2ad398862b01..jpeg?Expires=1778553234&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=zLgKfGLlWiT9nl%2Br%2F%2Fhb%2BIOW8W4%3D" alt="右侧照片1">
+      <img class="side-img" src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-11%2FMiniMax-M2.7%2F2046133781122781248%2Fdc514ff4550b48247cf49a304fd0e8204993da1c68ff13c88808d753b8754741..jpeg?Expires=1778553234&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=mW46%2B%2FjthCxLJKox1E7SVCOHJJg%3D" alt="右侧照片2">
+      <span class="side-sticker">🩷</span>
+    </div>
+  </div>
+
+  <!-- 弹窗 -->
+  <div class="modal" id="modal-box">
+    <div class="modal-content">
+      <p class="modal-title" id="modal-title">真的不想聊吗？/(ㄒoㄒ)/~~</p>
+      <div class="modal-btns">
+        <button class="btn btn-stubborn" id="modal-second" onclick="stillStubborn()">
+          依旧不对话/(ㄒoㄒ)/~~
+        </button>
+        <button class="btn btn-primary" onclick="giveUp()">
+          那好吧只能跟这个cch聊天了
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="heart-rain" id="heart-rain"></div>
+
+  <script>
+    function forgive() {
+      document.getElementById('scene-photos').classList.remove('active');
+      document.getElementById('scene-happy').classList.add('active');
+      createHeartRain();
+    }
+
+    function stubborn() {
+      showModal('真的不想聊吗？/(ㄒoㄒ)/~~', false);
+    }
+    function reset() {
+      location.reload();
+    }
+    function showModal(text, isSecondRound) {
+      document.getElementById('modal-title').textContent = text;
+      document.getElementById('modal-box').classList.add('show');
+      document.getElementById('modal-second').style.display = isSecondRound ? 'inline-block' : 'none';
+    }
+    function hideModal() {
+      document.getElementById('modal-box').classList.remove('show');
+    }
+    function stillStubborn() {
+      hideModal();
+      setTimeout(() => showModal('真的真的不想聊吗？🥺 求你了啦', true), 300);
+    }
+    function giveUp() {
+      hideModal();
+      forgive();
+    }
+
+    function createHeartRain() {
+      const container = document.getElementById('heart-rain');
+      const emojis = ['💕', '💗', '💖', '💝', '❤️', '🩷', '✨', '🌸'];
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'rain-heart';
+          heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          heart.style.left = Math.random() * 100 + '%';
+          heart.style.animationDuration = (2 + Math.random() * 2) + 's';
+          container.appendChild(heart);
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 60);
+      }
+    }
+  </script>
+</body>
+</html>
